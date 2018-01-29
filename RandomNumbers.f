@@ -26,7 +26,7 @@ VARIABLE (RND)
     dup 17 rshift xor
     dup DUP 5 lshift xor (rnd) ! ;
 
-:noname ( -- ) ms@ ms@ d2/ d2/ d2/ d2/ d2/ d2/ d2/ drop (rnd) ! ; is Randomize
+:noname ( -- ) time&date * * swap 1+ *  swap 1+ *  swap 1+ * seed ! (rnd) ! ; is Randomize
 :noname ( -- ) rnd swap mod ; is Random
 
 [then]
@@ -103,8 +103,10 @@ CREATE SEED  123475689 ,
    R * SWAP A * 2DUP > IF  - ELSE  - M +  THEN  DUP SEED ! ;
 
 \ Returns single random number less than n
-: RND ( n -- rnd )  \ 0 <= rnd < n
-   RAND SWAP MOD ;
+:noname ( n -- rnd )  \ 0 <= rnd < n
+   RAND SWAP MOD ; is Random
+
+:noname time&date * * swap 1+ *  swap 1+ *  swap 1+ * seed ! ; is Randomize
 
 [then]
 
@@ -124,7 +126,9 @@ RAND4 [if]
           3141592621 * 1+
           DUP Rand-X CELL+ !
        - ;
-	: RANDOM ( n1 -- n2 ) rand-next swap mod ;
+	:noname ( -- ) Rand-x 2@ ms@ dup 3456789012 + d+ Rand-X 2! ; is Randomize
+	:noname ( n1 -- n2 ) rand-next swap mod ; is Random
+
 [then]
 
 \ -------------------------------------------
@@ -228,8 +232,8 @@ CREATE MTI  -1 ,  \  Unsigned MTI > N means MT[...] is not initialized.
     DUP TEMPERING-SHIFT-T  TEMPERING-MASK-C AND  XOR
     DUP TEMPERING-SHIFT-L  XOR ;
 
-: Randomize ( -- )   ms@ ms@ d2/ d2/ d2/ d2/ d2/ d2/ d2/ drop  sgenrand ;
-: Random    ( n -- ) genrand swap mod ;
+:noname ( -- )   ms@ ms@ d2/ d2/ d2/ d2/ d2/ d2/ d2/ drop  sgenrand ; is Randomize
+:noname ( n -- ) genrand swap mod ; is Random
 
 [then]
 
@@ -250,7 +254,8 @@ CREATE SEED   1 , 1 ,
 
 : RAND SEED 2@   >R multiplier UM*  R> 0 D+ SWAP OVER SEED 2! ;
 
-: RANDOMIZE SEED 2! ; ms@ dup randomize
+:noname ( -- ) ms@ dup SEED 2! ; is Randomize
+:noname ( m -- n ) Rand swap mod ; is Random
 
 [then]
 
@@ -258,8 +263,30 @@ CREATE SEED   1 , 1 ,
 
 RAND7 [if]
 
+( Xorshift RGN )
+( George Marsaglia )
+( ref : https://www.jstatsoft.org/article/view/v008i14 )
 
+: } ( a i -- b ) cells + ;
 
+create xx{
+	123456789 , ( x - 0 )
+	362436069 , ( y - 1 )
+	521288629 , ( z - 2 )
+	88675123  , ( w - 3 )
+	5783321   , ( v - 4 )
+	6615241   , ( d - 5 )
+	0         , ( t - 6 )
+
+: rand ( -- )
+	xx{ 0 } @ dup 2 rshift xor xx{ 6 } ! 								\ t=(x^(x>>2))
+	xx{ 1 } xx{ 0 } 4 cells move										\ x=y; y=z; z=w; w=v ;
+	xx{ 4 } @ dup 4 lshift xor xx{ 6 } @ dup 1 lshift xor xor xx{ 4 } ! \ v=(v^(v<<4))^(t^(t<<1))
+	xx{ 5 } @ 362437 + dup xx{ 5 } ! xx{ 4 } @ +						\ (d+=362437)+v
+	;
+
+:noname ( -- ) ; is Randomize
+:noname ( m -- n ) rand swap mod ; is Random
 
 [then]
 
