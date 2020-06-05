@@ -1,0 +1,18 @@
+   +----------------------------------------------------------------+
+ 0 |[undefined] parse-name [if]                                     |
+ 1 |: ?eol ( -- f ) source nip >in @ > 0= ;                         |
+ 2 |: rch  ( -- c ) source drop >in @ + c@ ;                        |
+ 3 |: nch  ( -- ) 1 >in +! ;                                        |
+ 4 |: ?blank ( c -- f ) bl 1+ u< ;                                  |
+ 5 |: skipbl ( -- )    begin ?eol if true else                      |
+ 6 |  rch ?blank if nch false else true then then until ;           |
+ 7 |: rdsymb ( -- a u ) bl parse ;                                  |
+ 8 |: parse-name ( name -- a u ) skipbl rdsymb ;                    |
+ 9 |[then]                                                          |
+10 |                                                                |
+11 |                                                                |
+12 |                                                                |
+13 |                                                                |
+14 |                                                                |
+15 |                                                                |
+   +----------------------------------------------------------------+
