@@ -1,0 +1,23 @@
+  +----------------------------------------------------------------+
+ 0 |                                                                |
+ 1 |: ?eol ( a u -- f ) dup 0= ;                                    |
+ 2 |: rch ( a u -- c ) over c@ ;                                    |
+ 3 |: nch ( a u -- a1 u1 ) 1 /string ;                              |
+ 4 |: pch ( a u -- a1 u1 ) -1 /string ;                             |
+ 5 |: isblank ( a u -- f ) rch bl 1+ u< ;                           |
+ 6 |: notblank ( a u -- f ) isblank 0= ;                            |
+ 7 |: skipblank ( a u -- a1 u1 )                                    |
+ 8 |  begin ?eol 0= while isblank while nch repeat then ;           |
+ 9 |: skipnotblank ( a u -- a1 u1 )                                 |
+10 |  begin ?eol 0= while notblank while nch repeat then ;          |
+11 |: parse-name ( a u -- a u | a1 u1 a2 u2 )                       |
+12 |  ?eol 0= if                                                    |
+13 |  skipblank 2dup skipnotblank 2dup 2>r nip - 2r> 2swap          |
+14 |  then ;                                                        |
+15 |                                                                |
+   +----------------------------------------------------------------+
+
+\ I have called this word parse-name. Its not the same as the standard 
+\ word. It will parse a string as long as there is a space separated
+\ token, else it will return an empty string.
+
