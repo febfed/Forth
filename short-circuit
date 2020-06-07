@@ -2,10 +2,10 @@
  0 |( short-circuit and and or )                                    |
  1 |                                                                |
  2 |: bi-and ( x p q -- f )                                         |
- 3 |  >r over >r execute if execute else 2drop false then ;         |
+ 3 |  >r over r> execute if execute else 2drop false then ;         |
  4 |                                                                |
  5 |: bi-or ( x p q -- f )                                          |
- 6 |  >r over >r execute if 2drop true else execute then ;          |
+ 6 |  >r over r> execute if 2drop true else execute then ;          |
  7 |                                                                |
  8 |                                                                |
  9 |                                                                |
