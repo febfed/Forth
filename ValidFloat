@@ -1,0 +1,47 @@
+\ Some people think >float needs to be deprecated. 
+\ I think it works just fine.
+\ Its cheaper to define what is and isnt a float and pass that 
+\ token to >float to convert.
+
+   +----------------------------------------------------------------+
+ 0 |                                                                |
+ 1 | ANEW MARK-FNUMBER                                              |
+ 2 |: ?EOL ( A U -- F ) DUP 0= ;                                    |
+ 3 |: RCH ( A U -- C ) OVER C@ ;                                    |
+ 4 |: NCH ( A U -- A1 U1 ) 1 /STRING ;                              |
+ 5 |: DIGIT ( C -- F ) '0' '9' 1+ WITHIN ;                          |
+ 6 |: DIGIT* ( A U -- A1 U1 )  ( 0 OR MORE )                        |
+ 7 |  BEGIN ?EOL 0= WHILE RCH DIGIT WHILE NCH REPEAT THEN ;         |
+ 8 |: DIGIT+ ( A U -- A1 U1 T | F ) ( 1 OR MORE )                   |
+ 9 |  ?EOL IF FALSE ELSE RCH DIGIT IF NCH DIGIT* TRUE               |
+10 |  ELSE FALSE THEN THEN ;                                        |
+11 |: POS-NEG ( A U -- A1 U1 )                                      |
+12 |  RCH DUP '-' = SWAP '+' = XOR IF NCH THEN ;                    |
+13 |                                                                |
+14 |                                                                |
+15 |                                                                |
+   +----------------------------------------------------------------+
+   +----------------------------------------------------------------+
+ 0 |                                                                |
+ 1 |: <EXPO> ( A U -- T | F )                                       |
+ 2 |  RCH DUP 'E' = SWAP 'e' = OR IF NCH ELSE 2DROP FALSE EXIT THEN |
+ 3 |  ?EOL IF 2DROP TRUE EXIT THEN                                  |
+ 4 |  POS-NEG DIGIT+ >R 2DROP R> ;                                  |
+ 5 |                                                                |
+ 6 |: <SIGNI> ( A U -- )                                            |
+ 7 |  POS-NEG DIGIT+ 0= IF 2DROP FALSE R> DROP ELSE                 |
+ 8 |  RCH '.' = IF NCH DIGIT* THEN THEN ;                           |
+ 9 |                                                                |
+10 |: VALIDF ( A U -- T | F ) <SIGNI> <EXPO> ;                      |
+11 |                                                                |
+12 |: >FNUMBER ( A U -- S: T|F  F : R )                             |
+13 |  2DUP VALIDF IF >FLOAT ELSE -46 THROW THEN ;                   |
+14 |                                                                |
+15 |                                                                |
+   +----------------------------------------------------------------+
+
+\ The magic happens in validf 
+\ PS Its important to understand, it doesnt care about value
+\ if the format fits it will parse successfully or reject
+\ Example of how it could be used is given by >fnumber
+\ I dont like the name but I am using it for lack of a better one.
