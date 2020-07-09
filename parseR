@@ -1,0 +1,25 @@
+   +----------------------------------------------------------------+
+ 0 |                                                                |
+ 1 |: rch< ( a u -- c ) 2dup + 1- c@ ;                              |
+ 2 |: nch< ( a u -- a1 u1 ) 1- ;                                    |
+ 3 |: pch< ( a u -- a1 u1 ) 1+ ;                                    |
+ 4 |                                                                |
+ 5 | : parseR ( a u c -- a1 u1 a2 u2 )                              |
+ 6 |  >r 2dup begin ?eol if false true else                         |
+ 7 |  rch< r@ = if true true else nch< false then then until        |
+ 8 |  r> drop >r 2dup r> if nch< then  2>r nip tuck - >r + r> 2r> ; |
+ 9 |                                                                |
+10 |                                                                |
+11 |                                                                |
+12 |s" C:\Users\krishna\Documents\Reference\Forth\forth-2012.pdf"   |
+13 |'\' parseR cr type cr type                                      |
+14 |                                                                |
+15 |                                                                |
+   +----------------------------------------------------------------+
+   
+\ When we use PARSE within programs, it works from left to right.
+\ This behaviour is not special since this is how we read.
+\
+\ A recent problem made me rethink and write parseR. It wasnt any
+\ more difficult. The hardest part was extracting the right part
+\ of the string.
