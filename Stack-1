@@ -1,0 +1,92 @@
+\ I saw this in code written by  Matthias Trute
+\ ref : https://theforth.net/package/stack/current-view/Stack.4th
+\ 
+\ 
+\ I thought it would be easy to code up. I was wrong.
+\ Once get-stack and set-stack are working the rest is simple.
+\
+\ THIS HASNT BEEN TESTED FOR EVER POSSIBILITY, FOR EXAMPLE
+\ WHAT IF SOMEONE TRIES TO CREATE A STACK OF LENGTH 0 (ZERO). 
+\ REMEMBER IT WAS DONE AS A CODING EXERCISE AND NOTHING MORE
+\
+\ *** IF YOU FIND ANY ERRORS -- PLEASE LET ME KNOW. ***
+\
+   +----------------------------------------------------------------+
+ 0 |                                                                |
+ 1 | anew mark-stack                                                |
+ 2 |                                                                |
+ 3 |: stack ( n -- a ) dup , here >r 0 , 1+ cells allot r> ;        |
+ 4 |                                                                |
+ 5 |: get-stack ( s -- )                                            |
+ 6 |  dup cell+ swap @ dup >r 0 ?do dup i cells + @ swap loop       |
+ 7 |  drop r> ;                                                     |
+ 8 |                                                                |
+ 9 |: set-stack ( s -- )                                            |
+10 |  2dup ! over 0= if 2drop exit then                             |
+11 |  1 rot do 2dup i cells + ! nip -1 +loop drop ;                 |
+12 |                                                                |
+13 |                                                                |
+14 |-->                                                             |
+15 |                                                                |
+   +----------------------------------------------------------------+
+  
+   +----------------------------------------------------------------+
+ 0 |                                                                |
+ 1 |: >stack ( n s -- )                                             |
+ 2 |  tuck >r >r dup cell- @ over @ > 0= abort" Stack full"         |
+ 3 |  get-stack r> swap 1+ r> set-stack ;                           |
+ 4 |                                                                |
+ 5 |: stack> ( s -- n )                                             |
+ 6 |  dup @ 0= abort" Stack empty" dup >r get-stack 1- swap         |
+ 7 |  r> swap >r set-stack r> ;                                     |
+ 8 |                                                                |
+ 9 |                                                                |
+10 |                                                                |
+11 |                                                                |
+12 |                                                                |
+13 |                                                                |
+14 |-->                                                             |
+15 |                                                                |
+   +----------------------------------------------------------------+
+
+   +----------------------------------------------------------------+
+ 0 |                                                                |
+ 1 |: >back ( n s -- )                                              |
+ 2 |  dup >r get-stack r@ cell- @ over = abort" Stack full" 1+      |
+ 3 |  r> set-stack ;                                                |
+ 4 |                                                                |
+ 5 |: back> ( s -- n )                                              |
+ 6 |  dup >r get-stack dup 0= abort" Stack empty" 1-                |
+ 7 |  r> set-stack ;                                                |
+ 8 |                                                                |
+ 9 |: prstk ( s -- ) ." [ " dup cell+ swap @ cells bounds ?do i @   |
+10 |  . cell +loop ." |top]" ;                                      |
+11 |                                                                |
+12 |                                                                |
+13 |                                                                |
+14 |                                                                |
+15 |                                                                |
+   +----------------------------------------------------------------+
+
+
+
+\ create a stack using something like 
+\
+\  7 stack value aa
+\
+\ You can inspect whats on the stack  
+\
+\  : aa. ( -- ) aa prstk ;
+\
+\ push & pop at the top are using >stack & stack> 
+\ pop & push at the bottom are using >back & back> 
+\ 
+\ *** This means its easy to adapt this to behave like 
+\ a queue if thsts not clear*** 
+\
+\ the stack is create using here + allot. 
+\ hence once created cant be resized or freed easily.
+\ 
+\ get-stack & set-stack read the stack onto forth's 
+\ own data stack. So try not to create stacks that have 
+\ more cells than the allowed depth of your forth's data stack.
