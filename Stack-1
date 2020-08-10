@@ -82,9 +82,9 @@
 \ pop & push at the bottom are using >back & back> 
 \ 
 \ *** This means its easy to adapt this to behave like 
-\ a queue if thsts not clear*** 
+\ a queue if thats not clear*** 
 \
-\ the stack is create using here + allot. 
+\ the stack is created using 'here + allot'. 
 \ hence once created cant be resized or freed easily.
 \ 
 \ get-stack & set-stack read the stack onto forth's 
