@@ -1,0 +1,237 @@
+
+I took th words from the core and core-ext wordsets.
+Grouped them into categories. For some I think its 
+obvious but for others I am not sure I got it right.
+So just be aware that I might change it at a later 
+date.
+
+
+STACK OPS (14) 
+
+ DROP 
+ DUP 
+ ?DUP 
+ NIP 
+ OVER 
+ TUCK
+ SWAP 
+ ROT 
+ PICK 
+ ROLL 
+ DEPTH 
+ >R 
+ R> 
+ R@
+
+LOGICAL OPS (4) 
+
+ AND
+ OR
+ XOR
+ INVERT
+
+COMPARISON (14)
+
+ 0= 
+ 0<>
+ 0< 
+ 0> 
+ >
+ < 
+ = 
+ <>
+ U<
+ U>
+ WITHIN 
+ ABS
+ MIN 
+ MAX
+
+ARITHMETIC OPS (20)
+
+ + 
+ - 
+ NEGATE 
+ 1+ 
+ 1- 
+ * 
+ /
+ MOD
+ /MOD
+ */
+ */MOD
+ FM/MOD
+ SM/MOD 
+ 2*
+ 2/ 
+ LSHIFT
+ RSHIFT
+ UM*
+ UM/MOD 
+ M* 
+
+MEMORY ACCESS (16) 
+
+ @  
+ !
+ +! 
+ C@ 
+ C! 
+ ,
+ C, 
+ CHARS
+ CELLS
+ CHAR+
+ CELL+
+ ALIGN
+ ALIGNED
+ MOVE
+ ALLOT
+ BUFFER: 
+
+TYPES (3) 
+ 
+ CONSTANT
+ VARIABLE 
+ VALUE
+
+BUILT-IN CONSTANTS (4) 
+
+ TRUE
+ FALSE
+ BL 
+ CR 
+
+BUILT-IN VARIABLES (7) 
+ 
+ BASE 
+ HERE
+ PAD
+ STATE
+ SOURCE
+ SOURCE-ID
+ >IN 
+
+BUILT-IN FUNCTIONS (9) 
+
+ DECIMAL
+ HEX
+ FILL 
+ ERASE 
+ CHAR
+ [CHAR]
+ COUNT 
+ IS 
+ TO 
+
+CONTROL-FLOW (22) 
+
+ RECURSE
+ EXIT 
+ IF
+ ELSE
+ THEN 
+ BEGIN 
+ UNTIL 
+ WHILE
+ REPEAT 
+ AGAIN
+ DO 
+ ?DO 
+ LOOP 
+ +LOOP 
+ LEAVE 
+ UNLOOP 
+ I 
+ J
+ CASE
+ ENDCASE
+ OF 
+ ENDOF
+
+INPUT-OUTPUT (22) 
+ 
+ KEY
+ ACCEPT 
+ REFILL 
+ RESTORE-INPUT
+ SAVE-INPUT
+ EMIT
+ SPACE 
+ SPACES
+ TYPE 
+ .
+ .R
+ U.
+ U.R  
+ ."
+ .(
+ <#
+ #
+ #S
+ #>
+ HOLD
+ HOLDS
+ SIGN 
+
+COMPILER (28)
+
+ :
+ ;
+ :NONAME
+ CREATE
+ DOES>
+ >BODY
+ IMMEDIATE
+ LITERAL
+ C"
+ S"
+ S\"
+ POSTPONE  
+ [COMPILE]
+ COMPILE,
+ [
+ ]
+ FIND 
+ '
+ ['] 
+ WORD
+ PARSE
+ PARSE-NAME
+ EVALUATE 
+ MARKER
+ DEFER
+ DEFER@
+ DEFER!
+ ACTION-OF 
+
+MISC (9)
+
+ >NUMBER 
+ EXECUTE 
+ QUIT
+ ABORT
+ ABORT"
+ ( 
+ \
+ ENVIRONMENT?
+ UNUSED
+
+CONVERSION (1)
+
+ S>D
+
+DOUBLE STACK OPS (7)
+ 2DROP 
+ 2DUP 
+ 2SWAP 
+ 2OVER 
+ 2>R
+ 2R>
+ 2R@ 
+ 
+DOUBLE MEMORY OPS (2)
+ 
+ 2@ 
+ 2! 
+
