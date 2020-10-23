@@ -1,0 +1,139 @@
+Charles Moore recommends everyone should write their own editor. He believes it's easier than it sounds and worth the effort. 
+
+I never took this seriously until a summer of 2019. 
+
+I had switched to using linux ( ubuntu ) where I would use gedit as the editor and gforth as the forth. Switching between the two was second nature. I wrote a few small programs mostly for myself. It worked.
+
+Then I had to switch back to windows. My previous forth had been win32forth. I wanted something different, so I bit the bullet and downloaded swiftforth and vfxforth - evaluation versions. Both good and both  allowed me to drop into windows to use notepad. But it was not the same as what gedit and gforth had been before. 
+
+I knew about  http://tunes.org/wiki/block_20editor.html And around this time I also came across some fig-forth listings where they describe a line editor thats a few screens long.  So the idea was born. Lets write an editor that could be used on all - gforth ( linux / mac ), vfx, swift and win32forth (windows).
+
+After briefly considering my options and a few false starts, I had to admit my inability to code something of this size, I knew I would have to make compromises. I ended up doing two versions.
+
+The first version was a full screen editor. This was what I had dreamt of all along. But I found it to be slow on win32forth. My suspicion was that it was slow on my machine and on a faster PC it would have proven to be adequate. It was also a pain because it had grown larger than I imagined.
+
+I discarded it and settled on the second version. The more I used it the more I liked it. The bottom line is that its incomplete. I still need to add CUT/PASTE/UNDO , SEARCH/REPLACE etc. For the moment these are on the back burner. I will get to them soon.
+
+I wrote it mostly using gforth. But when I switched to windows I tended to use VFX. There was no particular reason to favour over Swift . Later I discovered VFX had a "cold" icon which meant it was easier to shutdown and restart VFX. 
+
+Here is an example on windows vfx 
+What you see on screen 
+----------------------------------------------------------------------
+
+   scr # 0    mxblk 31     filename: I:\MyWork\testing.blk
+   +----------------------------------------------------------------+
+ 0 |                                                                |
+ 1 |: anew ( <name> -- )                                            |
+ 2 |  parse-word dup 0= abort" Need a name to mark"                 |
+ 3 |  s" [defined] " pad place 2dup pad +place                      |
+ 4 |  s"  [if] " pad +place 2dup pad +place                         |
+ 5 |  s"  [then] marker " pad +place  pad +place                    |
+ 6 |  pad count evaluate ;                                          |
+ 7 |                                                                |
+ 8 |                                                                |
+ 9 |                                                                |
+10 |                                                                |
+11 |                                                                |
+12 |                                                                |
+13 |                                                                |
+14 |                                                                |
+15 |                                                                |
+   +----------------------------------------------------------------+
+DATA <0> 
+EDITOR  FORTH  EXTERNALS  ROOT  
+Current: EDITOR   
+
+----------------------------------------------------------------------
+
+You can see there are 32 blocks available and you are looking at block 0. You can also see the filename. Then the screen itself as 64 x 16. At the bottom you can see whats on the stack and vocabulary order. I used to show the floating stack too but took it out as I dont use floats all that often.
+
+Its important to state: 
+
+* It took me a few iterations to get to this stage. 
+* At first it was fustrating because I could no longer highlight, 
+  cut and paste 
+* No more formatting
+* No search, replace, find
+* NO UNDO 
+* No syntax coloring 
+
+On the other hand as I got comfortable I started to notice
+
+* I was testing more
+* I was factoring better
+* Making fewer mistakes because there was no syntax coloring 
+* Gaining a new appreciation for the REPL I had forgotten
+
+
+One idea that took me a few months to appreciate/understand/apply was placing as few definition per screen as possible. There was always an urge to fill the screen, as opposed to placing just one or two defintions per screen. Moving between screens is simply a matter of scrolling forwards/backwards. What I want to convey is that source is meant to be read. Good source is easier to understand.
+
+Here's what implemented so far
+----------------------------------------------------------------------
+
+words 
+Words in EDITOR  
+-->             EVAL            EVAL1           RESETORDER      LD 
+!FNAME          RF              (RF)            WF              (WF) 
+INS@END         INSBLK          CPBLK           SWBLK           CLRALL 
+RNDALL          RNDSCR          CLEAR           OV              ?BLKBL 
+DB              IB              IL              DL              D 
+P               B               N               LN              V 
+L               MYBLOCK         .S              +PLACE          FID 
+FN$             TMP1            BLK0            BLK#            A1 
+C/S             L/S              ok
+
+----------------------------------------------------------------------
+
+-->       - load next screen ( & evaluate ) 
+eval      - evaluate a block 
+eval1       - internal use only
+resetorder - sometimes vocabularies can get out of sync, reset 
+ld       - load block   
+!fname   - new filename
+rf       - read file   default testing.blk unless renamed
+(rf)        - internal
+wf       - write file default testing.blk unless renamed   
+(wf)       - internal
+ins@end  - insert at end
+insblk   - insert block 
+cpblk    - copy blocks
+swblk    - swap blocks
+clrall   - clear all screens
+rndall   - internal for testing, fill all screens with gibberish
+rndscr   - internal for testing, fill screen with gibberish
+clear    - clear a block 
+ov       - overview of empty vs used blocks
+?blkbl   - internal check if block is blank 
+DB       - delete block       
+IB       - insert block     
+IL       - insert after line     
+DL       - delete before lines       
+D        - delete a line
+P        - put a line      
+B        - back screen       
+N        - next acreen
+LN       - internal line number       
+V        - view screen
+L        - list screen      
+MYBLOCK   - func to calculate the start addess of block     
+.S      - redefinition to print for my use
++PLACE  - definition          
+FID     - fileid 
+FN$     - filename        
+TMP1    - temp space        
+BLK0    - start of blocks       
+BLK#    - max blocks         
+A1      - temp space 
+C/S     - characters/screen              
+L/S     - lines/scr
+
+
+The bottom line is if I had not done it myself, I would be none the wiser of 
+what could be accomplished simply by thinking differently from what I am used to.
+Its never going to compete with the IDEs out there, but at the same time it also 
+shows the power of simplicity. I urge you the reader to give it a try and see 
+if you come back a changed person too.
+
+{THIS IS A WORK-IN-PROGRESS.}
+
+
