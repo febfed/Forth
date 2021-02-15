@@ -1,0 +1,58 @@
+\
+\ Dxforth recently presented this as code to compute M*/ from MVP forth ( a fig-forth upgraded to forth-79 )
+\
+\ https://groups.google.com/g/comp.lang.forth/c/XhtI2xKmu9w/m/Jb71Kh1fEwAJ
+\
+
+: M*/ ( d n1 n2 -- d )
+2dup xor swap abs >r swap abs >r over xor rot rot
+dabs swap r@ u* rot r> u* rot 0 d+ r@ u/ rot rot
+r> u/ swap drop swap rot d+- ; 
+
+\
+\ Its works but its not easy to follow.
+\ I rewrote it into the code as below. 
+\ Suddenly all that stack shuffling makes sense
+\
+\ I also gave locals a try and that even more clearer.
+\ 
+\
+\------------------------------------------------------------------------------------------
+: myd* ( ud u -- ut )
+>r swap r@ um* rot r> um* rot 0 d+ ;
+
+: myd/ ( ut u -- ud )
+>r r@ um/mod rot rot r> um/mod swap drop swap ;
+
+: d+- ( ud sign -- d ) 0< if dnegate then ;
+
+: m-star-div ( d1 n1 n2 -- d2 )
+2dup xor ( d1 n1 n2 -- d1 n1 n2 n3 )
+swap abs >r ( d1 n1 n3 -- r: +n2 )
+swap abs >r ( d1 n3 -- r: +n2 +n1 )
+over xor rot rot ( d1 n4 -- n5 d1 r: +n2 +n1 )
+dabs ( n5 d1 -- n5 ud1 )
+r> myd* ( n5 d1 -- n5 n6=ud1*n1[t] r: +n2 )
+r> myd/ ( n5 n6 -- n5 n7=n6/n2 r: )
+rot d+- ; ( n5 n7 -- d )
+
+\ ------------------------------------------------------------------------------------------
+
+For the first time I appreciated the addition of locals :-
+
+: m-star-div ( d1 n1 n2 -- d2 )
+locals| n2 n1 d1h d1l |
+d1l d1h dabs
+n1 myd*
+n2 myd/
+d1h n1 n2 xor xor ( sign ) d+- ;
+
+\ ------------------------------------------------------------------------------------------ 
+\
+\ I didnt give it a full test workout 
+\ only simple stuff like computing 
+\ 1/2 1/4 1/10 etc and it seems to do that correctly.
+\
+\ So be advised to check before using in production code.
+\
+\ ------------------------------------------------------------------------------------------ 
