@@ -14,7 +14,7 @@ r> u/ swap drop swap rot d+- ;
 \ I rewrote it into the code as below. 
 \ Suddenly all that stack shuffling makes sense
 \
-\ I also gave locals a try and that even more clearer.
+\ I also gave locals a try and that was even more clearer in intent.
 \ 
 \
 \------------------------------------------------------------------------------------------
@@ -23,6 +23,12 @@ r> u/ swap drop swap rot d+- ;
 
 : myd/ ( ut u -- ud )
 >r r@ um/mod rot rot r> um/mod swap drop swap ;
+
+\
+\ can also be written as :- 
+\ : myd/ ( ut u -- ut urem )
+\  dup >r um/mod -rot r> um/mod swap drop swap ;
+\
 
 : d+- ( ud sign -- d ) 0< if dnegate then ;
 
@@ -40,12 +46,14 @@ rot d+- ; ( n5 n7 -- d )
 
 For the first time I appreciated the addition of locals :-
 
-: m-star-div ( d1 n1 n2 -- d2 )
-locals| n2 n1 d1h d1l |
-d1l d1h dabs
-n1 myd*
-n2 myd/
-d1h n1 n2 xor xor ( sign ) d+- ;
+: m-star-div ( d1 n1 +n2 -- d2 )
+  {: d1L d1H n1 n2 | sign :}
+
+  d1H n1 n2 xor xor to sign 
+  d1L d1H dabs 
+  n1 abs myd* 
+  n2 abs myd/
+  sign d+- ;
 
 \ ------------------------------------------------------------------------------------------ 
 \
