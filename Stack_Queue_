@@ -1,0 +1,76 @@
+( --- list helper fns --- )
+
+: new ( -- a )     2 cells allocate throw ;
+: cn ( x y -- p )  new dup >r 2! r> ;
+: cn@ ( p -- x y ) 2@ ;
+: -cn ( p -- )     free throw ;
+
+: swons  ( y x -- p ) swap cn ;
+: swuncn ( p -- y x ) cn@ swap ;
+
+: hd ( p -- x ) cn@ drop ;
+: tl ( p -- y ) cn@ nip ;
+
+: !hd ( x p -- ) dup >r tl r> 2! ;
+: !tl ( y p -- ) dup >r hd swap r> 2! ;
+
+: lst ( x -- l ) 0 cn ; 
+
+: null    ( l -- f ) 0= ;
+: notnull ( l -- f ) 0<> ;
+
+: eq    ( x y -- f ) = ;
+: eqstr ( x y -- f ) >r count r> count compare 0= ;
+
+: len ( l -- n ) 
+  0 swap begin dup notnull while 
+    swap 1+ swap tl 
+  repeat drop ;
+
+: pr ( l -- ) 
+  begin dup notnull while swuncn . repeat drop ;
+
+( --- Stack --- ) 
+
+: ?stk ( s -- f ) null ; 
+: push ( n s1 -- s2 ) depth 2 < abort" ERR: Missing args" cn ;
+: pop  ( s1 -- n s2 ) dup ?stk abort" ERR: Stack empty" dup cn@ rot -cn ;
+: peek ( s -- n )     dup ?stk abort" ERR: Stack empty" hd ;
+: stkpr ( s -- ) ." ( " pr ." ) " ;
+
+( --- Queue --- )
+
+: ?que  ( q1 q2 -- f ) drop null ;
+: qpush ( n q1 q2 -- q3 q4 ) 
+  depth 3 < abort" ERR: missing args"
+  2dup ?que if 2drop 0 cn dup 
+  else rot 0 cn   tuck >r !tl r> then ;
+: qpop  ( q1 q2 -- q3 q4 n ) 
+  2dup ?que abort" ERR: queue empty" 
+  >r dup cn@ rot -cn r> ;
+: qpeek ( q1 q2 -- n ) 
+  2dup ?que abort" ERR: queue empty" 
+  drop hd ;
+: quepr ( q -- ) ." [ " drop pr ." ] " ;
+
+( --- Example of use  --- )
+( Stack is held in variable )
+( Queue is held in 2variable )
+
+variable p 
+
+: ?p ( -- f ) p @ ?stk ; 
+: >p ( n -- ) p @ push p ! ;
+: p> ( -- n ) p @  pop p ! ;
+: p@ ( -- n ) p @ peek ;  
+: p. ( -- )   p @ stkpr ;
+: p# ( -- n ) p @ len ;
+
+2variable q
+
+: ?q ( -- f ) q 2@ ?que ; 
+: >q ( n -- ) q 2@ qpush q 2! ;
+: q> ( -- n ) q 2@  qpop q 2! ;
+: q@ ( -- n ) q 2@ qpeek ;
+: q. ( -- )   q 2@ quepr ;
+: q# ( -- n ) q 2@ drop len ;
