@@ -1,0 +1,47 @@
+{
+
+A question was asked in comp.lang.forth recently about skip and scan.
+
+That reminded me when I implemented similar functions in python which 
+had the ability to skip or can over multiple chars. Namely bl, tab, cr and lf.
+[' ','\t','\n','\r']
+
+I thought it would be difficult but as you can see from the code below they 
+are very similar to their char-equivalents.
+
+The helper func searchchar was needed. Could have used the standard func search
+but it needs a string and not a char.
+
+skipp and scann were just to show how easy they are to implement. 
+}
+
+
+: eol? ( a u -- a u f ) dup 0= ; 
+: rch  ( a u -- a u c ) over c@ ;
+: nch  ( a u -- a1 u1 ) 1 /string ;
+
+: skipp ( a u c -- a u )
+  >r begin eol? 0= while rch r@ = while nch repeat then r> drop ;
+
+: scann ( a u c -- a u )
+  >r begin eol? 0= while rch r@ <> while nch repeat then r> drop ;
+  
+( ---------------------------------------------------------- )
+: searchchar ( a u c -- f ) 
+  over 0> if 
+     scan nip 0> if true else false then 
+  else drop drop drop false then ;
+( ---------------------------------------------------------- )
+: skip[] ( a1 u1 a2 u2 -- a3 u3 )
+  2>r begin eol? 0= while 
+    rch 2r@ rot searchchar while 
+    nch repeat 
+  then 2r> 2drop ;
+ 
+( ---------------------------------------------------------- )
+: scan[] ( a1 u1 a2 u2 -- a3 u3 )
+  2>r begin eol? 0= while 
+    rch 2r@ rot searchchar 0= while 
+    nch repeat 
+  then 2r> 2drop ;
+( ---------------------------------------------------------- )
