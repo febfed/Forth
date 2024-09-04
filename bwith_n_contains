@@ -1,0 +1,44 @@
+( ------------------------------------------------------------------)
+
+create tmp1 256 chars allot
+
+: (words) 2dup tmp1 count search if 2drop type space else 2drop 2drop then ;
+
+: contains ( -- ) cr cr
+bl word dup c@ 0= if drop words else
+count tmp1 place context @ cell+
+begin @ dup while dup name>string (words) repeat drop
+then ;
+
+: (bwith)
+dup tmp1 c@ < if 2drop else
+2dup drop tmp1 count tuck compare 0= if type space else
+2drop
+then
+then ;
+
+: bwith ( "ccc" -- ) cr cr
+bl word dup c@ 0= if drop words else
+count tmp1 place context @ cell+
+begin @ dup while dup name>string (bwith) repeat drop
+then ;
+
+cr .( +-------------------------------------------------+ )
+cr .( | | )
+cr .( | contains => "ccc" -- | )
+cr .( | like words but allows you to find word | )
+cr .( | containing the sequence "ccc" | )
+cr .( | | )
+cr .( | eg contains float | )
+cr .( | contains without any args behaves like words | )
+cr .( | | )
+cr .( | bwith => "ccc" -- | )
+cr .( | searches for words beginning with sequence | )
+cr .( | "ccc" otherwise defaults back to words | )
+cr .( | | )
+cr .( | eg bwith ? | )
+cr .( | bwith ar | )
+cr .( | | )
+cr .( +-------------------------------------------------+ )
+
+( ------------------------------------------------------------------)
